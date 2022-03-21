@@ -4,6 +4,7 @@ import (
 	"github.com/dserdiuk/flat-notifier/internal/notifier"
 	"github.com/dserdiuk/flat-notifier/internal/service"
 	"github.com/dserdiuk/flat-notifier/internal/source"
+	"log"
 	"os"
 )
 
@@ -15,6 +16,7 @@ func main() {
 
 	sources = append(sources, myHomeSource)
 	s := service.NewCheckService(sources, n)
+	log.Println("Start checking service")
 	go s.Start()
 
 	forever := make(chan bool)

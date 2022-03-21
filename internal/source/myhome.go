@@ -111,10 +111,10 @@ func getUnixTime(date string) int64 {
 	return t.Unix()
 }
 
-func (s *MyHomeSource) GetNewFlats(context context.Context, ch chan []*model.Flat) {
+func (s *MyHomeSource) GetNewFlats(context context.Context, ch chan []*model.Flat) error {
 	resp, err := http.Get(BaseUrl + s.Options)
 	if err != nil {
-		return
+		return err
 	}
 
 	defer func() {
@@ -124,19 +124,19 @@ func (s *MyHomeSource) GetNewFlats(context context.Context, ch chan []*model.Fla
 
 	response, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return
+		return err
 	}
 
 	var res MyHomeResult
 	err = json.Unmarshal(response, &res)
 	if err != nil {
-		return
+		return err
 	}
 
 	var flats []*model.Flat
 	for _, flat := range res.Data.Prs {
 		if getUnixTime(flat.OrderDate) < s.LastCheckTime.Unix() {
-			//break
+			break
 		}
 
 		for _, point := range res.Data.MapData.Points {
@@ -147,8 +147,7 @@ func (s *MyHomeSource) GetNewFlats(context context.Context, ch chan []*model.Fla
 			flats = append(flats, &modelFlat)
 			break
 		}
-
-		break
 	}
 	ch <- flats
+	return nil
 }

@@ -18,6 +18,10 @@ func NewTelegramNotifier(token string, chatId string) *Telegram {
 	}
 }
 
-func (n *Telegram) Notify(message string) {
-	_, _ = http.Get(fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage?text=%s&chat_id=%s", n.Token, url.QueryEscape(message), n.ChatId))
+func (n *Telegram) Notify(message string) error {
+	_, err := http.Get(fmt.Sprintf("https://api.telegram.org/bot%s/sendMessage?text=%s&chat_id=%s", n.Token, url.QueryEscape(message), n.ChatId))
+	if err != nil {
+		return err
+	}
+	return nil
 }

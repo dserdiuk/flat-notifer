@@ -6,5 +6,5 @@ import (
 )
 
 type Source interface {
-	GetNewFlats(context context.Context, ch chan []*model.Flat)
+	GetNewFlats(context context.Context, ch chan []*model.Flat) error
 }

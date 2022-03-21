@@ -5,6 +5,7 @@ import (
 	"github.com/dserdiuk/flat-notifier/internal/model"
 	"github.com/dserdiuk/flat-notifier/internal/notifier"
 	"github.com/dserdiuk/flat-notifier/internal/source"
+	"log"
 	"sync"
 	"time"
 )
@@ -30,7 +31,10 @@ func (c *Checker) Start() {
 }
 
 func (c *Checker) Notify(flat *model.Flat) {
-	c.Notifier.Notify(flat.Url)
+	err := c.Notifier.Notify(flat.Url)
+	if err != nil {
+		log.Printf("failed to notify: %v\n", err)
+	}
 }
 
 func (c *Checker) WaitNewFlats(ch chan []*model.Flat) {
@@ -52,7 +56,12 @@ func (c *Checker) WaitNewFlats(ch chan []*model.Flat) {
 func (c *Checker) CheckAllSources(ch chan []*model.Flat) {
 	ctx := context.TODO()
 	for _, src := range c.Sources {
-		go src.GetNewFlats(ctx, ch)
+		go func() {
+			err := src.GetNewFlats(ctx, ch)
+			if err != nil {
+				log.Printf("failed to get flats: %v\n", err)
+			}
+		}()
 		c.Wg.Add(1)
 	}
 	c.Wg.Wait()
