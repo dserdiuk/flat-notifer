@@ -1,4 +1,5 @@
 FROM golang:alpine as builder
+RUN apk add git
 ENV GO111MODULE=on
 WORKDIR /app
 COPY go.mod ./
