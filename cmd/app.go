@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"github.com/dserdiuk/flat-notifier/internal/notifier"
 	"github.com/dserdiuk/flat-notifier/internal/service"
 	"github.com/dserdiuk/flat-notifier/internal/source"
 	"log"
+	"net/http"
 	"os"
 )
 
@@ -18,7 +20,8 @@ func main() {
 	s := service.NewCheckService(sources, n)
 	log.Println("Start checking service")
 	go s.Start()
-
-	forever := make(chan bool)
-	<-forever
+	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
+		fmt.Fprintf(writer, "ok")
+	})
+	http.ListenAndServe(":8080", nil)
 }
