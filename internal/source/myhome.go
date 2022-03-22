@@ -136,7 +136,7 @@ func (s *MyHomeSource) GetNewFlats(context context.Context, ch chan []*model.Fla
 	var flats []*model.Flat
 	for _, flat := range res.Data.Prs {
 		if getUnixTime(flat.OrderDate) < s.LastCheckTime.Unix() {
-			break
+			continue
 		}
 
 		for _, point := range res.Data.MapData.Points {
