@@ -15,8 +15,9 @@ func main() {
 
 	n := notifier.NewTelegramNotifier(os.Getenv("TG_TOKEN"), os.Getenv("TG_CHAT_ID"))
 	myHomeSource := source.NewMyHomeSource(os.Getenv("MYHOME_QUERY_STR"))
+	ssSource := source.NewSsSource(os.Getenv("SS_QUERY_STR"))
 
-	sources = append(sources, myHomeSource)
+	sources = append(sources, myHomeSource, ssSource)
 	s := service.NewCheckService(sources, n)
 	log.Println("Start checking service")
 	go s.Start()

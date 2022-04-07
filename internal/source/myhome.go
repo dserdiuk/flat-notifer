@@ -100,7 +100,7 @@ type MyHomeResult struct {
 	} `json:"Data"`
 }
 
-func getUnixTime(date string) int64 {
+func (s *MyHomeSource) getUnixTime(date string) int64 {
 	layout := "2006-01-02 15:04:05"
 	t, err := time.Parse(layout, date)
 	if err != nil {
@@ -135,7 +135,7 @@ func (s *MyHomeSource) GetNewFlats(context context.Context, ch chan []*model.Fla
 
 	var flats []*model.Flat
 	for _, flat := range res.Data.Prs {
-		if getUnixTime(flat.OrderDate) < s.LastCheckTime.Unix() {
+		if s.getUnixTime(flat.OrderDate) < s.LastCheckTime.Unix() {
 			continue
 		}
 
